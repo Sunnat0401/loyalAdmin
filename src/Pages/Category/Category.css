@@ -1,0 +1,19 @@
+.btn{
+    margin: 0px 5px
+}
+.green{
+    background-color: green;
+    color: white;
+}
+.red{
+    background-color: red;
+    color: white;
+}
+.blue{
+    background-color:#1677FF;
+    color: white;
+}
+.titles{
+    font-size: 16px !important;
+    padding: 0px !important;
+}
