@@ -59,6 +59,7 @@ const LoginPage = () => {
                     layout="vertical"
                 >
                     <Form.Item
+                    className='form-item'
                         label="Telefon raqam"
                         name="phone_number"
                         rules={[{ required: true, message: 'Iltimos, telefon raqamingizni kiriting!' }]}
@@ -67,6 +68,7 @@ const LoginPage = () => {
                     </Form.Item>
 
                     <Form.Item
+                      className='form-item'
                         label="Parol"
                         name="password"
                         rules={[{ required: true, message: 'Iltimos, parolingizni kiriting!' }]}
