@@ -5,12 +5,10 @@ import "./News.css";
 import { useEffect } from "react";
 
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 
 const News = () => {
-  const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzkwYzBiNzktMWFkNy00NGM1LWE5ODMtMzUzMzMzNjZmOGU5IiwidG9rZW5fdHlwZSI6ImFjY2VzcyIsImlhdCI6MTcyMDg0NzM1MywiZXhwIjoxNzUyMzgzMzUzfQ.o0IFCVKYi7Sf2TvrVm8xxLXicuFZeyTHE71HwqpqWOA`;
+  const token = localStorage.getItem("accessToken");
   const baseUrl = `https://api.dezinfeksiyatashkent.uz/api/`;
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [news, setNews] = useState([]);
