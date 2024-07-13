@@ -23,26 +23,44 @@ const Category = () => {
   };
 // getData
 // Postdata
-// const postData=() =>{
-//   fetch('https://api.dezinfeksiyatashkent.uz/api/categories', {
-//     method: 'POST',
-//     body: JSON.stringify({
-//       // Add parameters here
-//     })
+// const addModel = (values) => {
+  
+//   const token = localStorage.getItem('token');
+  
+//   fetch("https://autoapi.dezinfeksiyatashkent.uz/api/models", {
+//     method: "POST",
 //     headers: {
-//       'Content-type': 'application/json; charset=UTF-8',
+//       'Authorization': `Bearer ${token}`,
+//       'Content-Type': 'application/json' // Ensure correct content type if sending JSON data
 //     },
+//     body: JSON.stringify(values) // Convert JavaScript object to JSON string
 //   })
-//      .then((response) => response.json())
-//      .then((data) => {
-//         console.log(data);
-//         // Handle data
-//      })
-//      .catch((err) => {
-//         console.log(err.message);
-//      });
-// }
-
+//   .then(response => {
+//     if (!response.ok) {
+//       throw new Error('Xato so\'rov yuborildi');
+//     }
+//     return response.json();
+//   })
+//   .then(data => {
+//     if (data?.success) {
+//       message.success("Model muvaffaqiyatli qo'shildi");
+//       getModels(); // Refresh the models list
+//       getBrands(); // Refresh the brands list if necessary
+//       form.resetFields(); // Reset form fields after successful submission
+//       setOpenAddModal(false); // Close the modal after successful submission
+//     } else {
+//       message.error(data?.message || "Model qo'shishda xatolik yuz berdi");
+//       setOpenAddModal(false); 
+//     }
+//   })
+//   .catch(error => {
+//     console.error('Error adding model:', error);
+//     message.error('Model qo\'shishda xatolik yuz berdi');
+//   })
+//   .finally(() => {
+//     setLoading(false);
+//   });
+// };
   // PostData
   const showModal = () => {
     setIsModalOpen(true);
