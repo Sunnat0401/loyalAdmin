@@ -8,7 +8,7 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
-    const token = sessionStorage.getItem('accesstoken');
+    const token = localStorage.getItem('accesstoken');
 
     useEffect(() => {
         if (token) {
