@@ -1,5 +1,5 @@
-
-import { NavLink } from 'react-router-dom'
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 function PageNotFound() {
   return (
@@ -10,7 +10,7 @@ function PageNotFound() {
             Home Page
         </NavLink>
     </div>
-  )
+  );
 }
 
-export default PageNotFound
+export default PageNotFound;
