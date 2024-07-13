@@ -9,8 +9,12 @@ import Modal from "@mui/material/Modal";
 
 const News = () => {
   const token = localStorage.getItem("accesstoken");
+  const baseUrl = "https://api.dezinfeksiyatashkent.uz/api/"
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [news, setNews] = useState([]);
+
+
+  const newsForm = document.getElementById("newsForm");
 
   const [open, setOpen] = useState(false);
 
@@ -60,7 +64,7 @@ const News = () => {
   const [textTr, setTextTr] = useState();
   const [author, setAuthor] = useState();
   const [picture, setPicture] = useState(null);
-
+/* 
   console.log("titleEn", titleEn);
   console.log("titleRu", titleRu);
   console.log("titleUz", titleUz);
@@ -72,7 +76,7 @@ const News = () => {
   console.log("textZh", textZh);
   console.log("textTr", textTr);
   console.log("author", author);
-  console.log("images", picture);
+  console.log("images", picture); */
 
 
   const formData = new FormData();
@@ -90,7 +94,6 @@ const News = () => {
   formData.append("images", picture);
 
 
-
   //POST
     fetch(`${baseUrl}news/`, {
         method: 'POST',
@@ -101,7 +104,9 @@ const News = () => {
       })
          .then((response) => response.json())
          .then((data) => {
-            console.log(data?.message);
+          if(data?.message) {
+            getNews();
+          }
          })
          .catch((err) => {
             console.log(err.message);
@@ -124,7 +129,7 @@ const News = () => {
           <div className="container">
             <div className="row">
               <div className="col-lg-12">
-                <form onSubmit={handleCloseAdd}>
+                <form onSubmit={handleCloseAdd} id="newsForm">
                   <div className="container">
                     <div className="row">
                       <div className="col-lg-12">
@@ -235,7 +240,7 @@ const News = () => {
                     </div>
                     <div className="row">
                         <div className="col-lg-12 mt-4">
-                            <button className="btn btn-outline-primary mx-2" onClick={handleCloseAdd}>Cancel</button>
+                            <button className="btn btn-outline-primary mx-1" onClick={handleCloseAdd}>Cancel</button>
                             <button className="btn btn-primary" >Add</button>
                         </div>
                     </div>
