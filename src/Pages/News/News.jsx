@@ -8,12 +8,12 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 
 const News = () => {
-  const token = localStorage.getItem("accessToken");
-  const baseUrl = `https://api.dezinfeksiyatashkent.uz/api/`;
+  const token = localStorage.getItem("accesstoken");
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [news, setNews] = useState([]);
 
   const [open, setOpen] = useState(false);
+
   const handleOpenAdd = () => {
     setOpen(true);
   };
@@ -246,7 +246,7 @@ const News = () => {
           </div>
         </Box>
       </Modal>
-      <div className="container p-5">
+      <div className="container">
         <div className="row">
           <div className="col-lg-12">
             <button className="btn btn-primary" onClick={handleOpenAdd}>
