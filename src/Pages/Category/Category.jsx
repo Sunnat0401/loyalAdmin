@@ -17,7 +17,7 @@ const Category = () => {
     fetch('https://api.dezinfeksiyatashkent.uz/api/categories')
       .then((res) => res.json())
       .then((data) => {
-        console.log(data?.data);
+        // console.log(data?.data);
         setData(data?.data);
       });
   };
