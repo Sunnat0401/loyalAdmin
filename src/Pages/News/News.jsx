@@ -14,7 +14,6 @@ const News = () => {
   const [news, setNews] = useState([]);
 
 
-  const newsForm = document.getElementById("newsForm");
 
   const [open, setOpen] = useState(false);
 
@@ -37,20 +36,18 @@ const News = () => {
     p: 4,
   };
 
+
   //GET
   const getNews = () => {
-    fetch(`${baseUrl}news/`, {
-      method: "GET",
-      headers: {
-        "Authorithazion": `Bearer ${token}`,
-      },
-    })
+    fetch(`${baseUrl}news/`)
       .then((resp) => resp.json())
       .then((data) => {
         setNews(data?.data);
-        console.log(data?.data);
       });
   };
+
+
+
 
   const [titleEn, setTitleEn] = useState();
   const [titleRu, setTitleRu] = useState();
@@ -95,22 +92,29 @@ const News = () => {
 
 
   //POST
+  const addNews = (e) => {
+    e.preventDefault();
+    handleOpenAdd();
     fetch(`${baseUrl}news/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            "Authorithazion" : `Bearer ${token}`
-        },
-      })
-         .then((response) => response.json())
-         .then((data) => {
-          if(data?.message) {
-            getNews();
-          }
-         })
-         .catch((err) => {
-            console.log(err.message);
-         });
+      method: 'POST',
+      body: formData,
+      headers: {
+          "Authorization" : `Bearer ${token}`
+      },
+    })
+       .then((response) => response.json())
+       .then((data) => {
+        if(data?.message) {
+          getNews();
+          handleCloseAdd();
+        }
+       })
+       .catch((err) => {
+          console.log(err.message);
+       });
+
+  }
+  
 
   useEffect(() => {
     getNews();
@@ -129,7 +133,7 @@ const News = () => {
           <div className="container">
             <div className="row">
               <div className="col-lg-12">
-                <form onSubmit={handleCloseAdd} id="newsForm">
+                <form onSubmit={addNews} id="newsForm">
                   <div className="container">
                     <div className="row">
                       <div className="col-lg-12">
