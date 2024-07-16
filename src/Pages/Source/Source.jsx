@@ -10,9 +10,12 @@ const Source = () => {
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [source, setSource] = useState([]);
 
+  const [id, setId] = useState();
+  const [data, setData] = useState({});
+
   const [openSrc, setOpenSrc] = useState(false);
 
-  //GET
+//GET
   const getSource = () => {
     fetch(`${baseUrl}sources/`)
       .then((resp) => resp.json())
@@ -50,7 +53,7 @@ const Source = () => {
   console.log("category", category);
   console.log("picture", picture); */
 
-
+//POST
   const formDataSrc = new FormData();
   formDataSrc.append("title", title);
   formDataSrc.append("category", category);
@@ -72,6 +75,11 @@ const Source = () => {
         handleCloseSrc();
       }
     })
+  }
+
+
+  const getId = (item) => {
+    console.log(item);
   }
 
   useEffect(() => {
@@ -225,7 +233,7 @@ const Source = () => {
                         />
                       </td>
                       <td>
-                        <button className="btn btn-outline-primary mx-1">
+                        <button className="btn btn-outline-primary mx-1" onClick={getId}>
                           Edit
                         </button>
                         <button className="btn btn-danger">Delete</button>

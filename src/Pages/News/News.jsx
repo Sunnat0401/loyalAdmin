@@ -9,19 +9,28 @@ import Modal from "@mui/material/Modal";
 
 const News = () => {
   const token = localStorage.getItem("accesstoken");
-  const baseUrl = "https://api.dezinfeksiyatashkent.uz/api/"
+  const baseUrl = "https://api.dezinfeksiyatashkent.uz/api/";
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [news, setNews] = useState([]);
 
-
+  const [id, setId] = useState();
+  const [data, setData] = useState({});
 
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   const handleOpenAdd = () => {
     setOpen(true);
   };
   const handleCloseAdd = () => {
     setOpen(false);
+  };
+
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
+  };
+  const handleEditClose = () => {
+    setOpenEdit(false);
   };
 
   const style = {
@@ -36,7 +45,6 @@ const News = () => {
     p: 4,
   };
 
-
   //GET
   const getNews = () => {
     fetch(`${baseUrl}news/`)
@@ -45,9 +53,6 @@ const News = () => {
         setNews(data?.data);
       });
   };
-
-
-
 
   const [titleEn, setTitleEn] = useState();
   const [titleRu, setTitleRu] = useState();
@@ -61,20 +66,6 @@ const News = () => {
   const [textTr, setTextTr] = useState();
   const [author, setAuthor] = useState();
   const [picture, setPicture] = useState(null);
-/* 
-  console.log("titleEn", titleEn);
-  console.log("titleRu", titleRu);
-  console.log("titleUz", titleUz);
-  console.log("textUz", textUz);
-  console.log("textRu", textRu);
-  console.log("textEn", textEn);
-  console.log("titleTr", titleTr);
-  console.log("titleZh", titleZh);
-  console.log("textZh", textZh);
-  console.log("textTr", textTr);
-  console.log("author", author);
-  console.log("images", picture); */
-
 
   const formData = new FormData();
   formData.append("title_en", titleEn);
@@ -90,31 +81,129 @@ const News = () => {
   formData.append("author", author);
   formData.append("images", picture);
 
-
   //POST
   const addNews = (e) => {
     e.preventDefault();
     handleOpenAdd();
     fetch(`${baseUrl}news/`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
       headers: {
-          "Authorization" : `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     })
-       .then((response) => response.json())
-       .then((data) => {
-        if(data?.message) {
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.message) {
           getNews();
           handleCloseAdd();
         }
-       })
-       .catch((err) => {
-          console.log(err.message);
-       });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
+  /* 
+  console.log("titleEn", titleEn);
+  console.log("titleRu", titleRu);
+  console.log("titleUz", titleUz);
+  console.log("textUz", textUz);
+  console.log("textRu", textRu);
+  console.log("textEn", textEn);
+  console.log("titleTr", titleTr);
+  console.log("titleZh", titleZh);
+  console.log("textZh", textZh);
+  console.log("textTr", textTr);
+  console.log("author", author);
+  console.log("images", picture); */
+
+  //PUT
+  const getId = (item) => {
+    setOpenEdit(true);
+    setId(item?.id);
+    console.log(item);
+    console.log("data?.picture", data?.picture);
+    setData({
+      titleEn: item?.title_en,
+      titleRu: item?.title_ru,
+      titleUz: item?.title_uz,
+      textUz: item?.text_uz,
+      textRu: item?.text_ru,
+      textEn: item?.text_en,
+      titleTr: item?.title_tr,
+      titleZh: item?.title_zh,
+      textZh: item?.text_zh,
+      textTr: item?.text_tr,
+      author: item?.author,
+      picture: item?.news_images[0]?.["image.src"],
+    });
+  };
+
+
+  const formDataEdit = new FormData();
+  formDataEdit.append("title_en", data?.titleEn);
+  formDataEdit.append("title_ru", data?.titleRu);
+  formDataEdit.append("title_uz", data?.titleUz);
+  formDataEdit.append("text_uz", data?.textUz);
+  formDataEdit.append("text_ru", data?.textRu);
+  formDataEdit.append("text_en", data?.textEn);
+  formDataEdit.append("title_tr", data?.titleTr);
+  formDataEdit.append("title_zh", data?.titleZh);
+  formDataEdit.append("text_zh", data?.textZh);
+  formDataEdit.append("text_tr", data?.textTr);
+  formDataEdit.append("author", data?.author);
+  formDataEdit.append("images", data?.picture);
+  const handleEdit = (e) => {
+    e.preventDefault();
+    fetch(`${baseUrl}news/${id}`, {
+      method: "PUT",
+      body: formDataEdit,
+      headers: {
+        "Authorization" : `Bearer ${token}`
+      }
+    })
+    .then(resp => resp.json())
+    .then(dataEdit => {
+      if(dataEdit?.success) {
+        handleEditClose();
+        getNews();
+        alert(dataEdit?.message);
+      }
+    })
   }
-  
+
+
+
+
+
+/*   const handleDelete = (e) => {
+    e.preventDefault();
+    fetch(`${baseUrl}/news/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization" : `Bearer ${token}`
+      }
+    })
+    .then(resp => resp.json())
+    .then(dataDel => {
+      if(dataDel?.message) {
+        const newData = news?.filter((deleteNews) => deleteNews?.id !== id);
+        setNews(newData)
+        alert(dataEdit?.message)
+      }
+    }
+    )
+    .catch(err => console.error(err))
+  }; */
+
+
+
+//DELETE 
+  const handleDelete = (item) => {
+    /* const newData = data?.filter((itemD) => item?.id !== itemD);
+    setData({...data, newData}) */
+  }
 
   useEffect(() => {
     getNews();
@@ -122,6 +211,193 @@ const News = () => {
 
   return (
     <>
+      {/* Tahrirlash */}
+      <Modal
+        title="Editing"
+        open={openEdit}
+        onClose={handleEditClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <form id="newsForm">
+                  <div className="container">
+                    <div className="row">
+                      <div className="col-lg-12">
+                        <p>Tahrirlash</p>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="titleEn">*Title En</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="titleEn"
+                          value={data?.titleEn}
+                          onChange={(e) =>
+                            setData({ ...data, titleEn: e?.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="titleRu">*Title Ru</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="titleRu"
+                          value={data?.titleRu}
+                          onChange={(e) =>
+                            setData({ ...data, titleRu: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="titleUz">*Title Uz</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="titleUz"
+                          value={data?.titleUz}
+                          onChange={(e) =>
+                            setData({ ...data, titleUz: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="textUz">*Text Uz</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="textUz"
+                          value={data?.textUz}
+                          onChange={(e) =>
+                            setData({ ...data, textUz: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="textRu">*Text Ru</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="textRu"
+                          value={data?.textRu}
+                          onChange={(e) =>
+                            setData({ ...data, textRu: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="textEn">*Text En</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="textEn"
+                          value={data?.textEn}
+                          onChange={(e) =>
+                            setData({ ...data, textEn: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="titleTr">*Title Tr</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="titleTr"
+                          value={data?.titleTr}
+                          onChange={(e) =>
+                            setData({ ...data, titleTr: e?.target?.value })
+                          }
+                        />
+                      </div>{" "}
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="titleZh">*Title Zh</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="titleZh"
+                          value={data?.titleZh}
+                          onChange={(e) =>
+                            setData({ ...data, titleZh: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="textZh">*Text Zh</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="textZh"
+                          value={data?.textZh}
+                          onChange={(e) =>
+                            setData({ ...data, textZh: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="textTr">*Text Tr</label>
+                        <input
+                          type="text"
+                          className="form-control mt-2 mb-2"
+                          id="textTr"
+                          value={data?.textTr}
+                          onChange={(e) =>
+                            setData({ ...data, textTr: e?.target?.value })
+                          }
+                        />
+                      </div>
+                      <div className="col-lg-4 d-flex flex-column">
+                        <label htmlFor="author">Author</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="author"
+                          value={data?.author}
+                          onChange={(e) =>
+                            setData({ ...data, author: e?.target?.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-lg-4 d-flex flex-column mt-2">
+                        <label htmlFor="picture">Upload the images</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          id="picture"
+                          accept="image/*"
+                          onChange={(e) =>
+                            setData({ ...data, picture: e?.target?.files[0] })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-lg-12 mt-4">
+                        <button
+                          className="btn btn-outline-primary mx-1"
+                          onClick={handleEditClose}
+                        >
+                          Cancel
+                        </button>
+                        <button className="btn btn-primary" onClick={handleEdit}>Edit</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
+      {/* Qo`shish */}
       <Modal
         title="Add"
         open={open}
@@ -233,20 +509,36 @@ const News = () => {
                       </div>
                       <div className="col-lg-4 d-flex flex-column">
                         <label htmlFor="author">Author</label>
-                        <input type="text" className="form-control" id="author" onChange={(e) => setAuthor(e?.target?.value)}/>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="author"
+                          onChange={(e) => setAuthor(e?.target?.value)}
+                        />
                       </div>
                     </div>
                     <div className="row">
-                    <div className="col-lg-4 d-flex flex-column mt-2">
+                      <div className="col-lg-4 d-flex flex-column mt-2">
                         <label htmlFor="picture">Upload the images</label>
-                        <input type="file" className="form-control" id="picture" onChange={(e) => setPicture(e?.target?.files[0])}/>
+                        <input
+                          type="file"
+                          className="form-control"
+                          id="picture"
+                          accept="image/*"
+                          onChange={(e) => setPicture(e?.target?.files[0])}
+                        />
                       </div>
                     </div>
                     <div className="row">
-                        <div className="col-lg-12 mt-4">
-                            <button className="btn btn-outline-primary mx-1" onClick={handleCloseAdd}>Cancel</button>
-                            <button className="btn btn-primary" >Add</button>
-                        </div>
+                      <div className="col-lg-12 mt-4">
+                        <button
+                          className="btn btn-outline-primary mx-1"
+                          onClick={handleCloseAdd}
+                        >
+                          Cancel
+                        </button>
+                        <button className="btn btn-primary">Add</button>
+                      </div>
                     </div>
                   </div>
                 </form>
@@ -255,6 +547,7 @@ const News = () => {
           </div>
         </Box>
       </Modal>
+
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
@@ -291,7 +584,10 @@ const News = () => {
                       <td>{item?.title_uz}</td>
                       <td>{item?.author}</td>
                       <td>
-                        <button className="btn btn-outline-primary me-2">
+                        <button
+                          className="btn btn-outline-primary me-2"
+                          onClick={() => getId(item)}
+                        >
                           Edit
                         </button>
                         <button className="btn btn-danger">Delete</button>
