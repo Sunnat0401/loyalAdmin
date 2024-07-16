@@ -18,6 +18,7 @@ const News = () => {
 
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
   const handleOpenAdd = () => {
     setOpen(true);
@@ -32,6 +33,13 @@ const News = () => {
   const handleEditClose = () => {
     setOpenEdit(false);
   };
+
+  const handleDeleteOpen = () => {
+    setOpenDelete(true);
+  }
+  const handleDeleteClose = () => {
+    setOpenDelete(false);
+  }
 
   const style = {
     position: "absolute",
@@ -123,7 +131,6 @@ const News = () => {
     setOpenEdit(true);
     setId(item?.id);
     console.log(item);
-    console.log("data?.picture", data?.picture);
     setData({
       titleEn: item?.title_en,
       titleRu: item?.title_ru,
@@ -140,6 +147,11 @@ const News = () => {
     });
   };
 
+  const deleteID = (item) => {
+    setId(item?.id);
+    setOpenDelete(true);
+    console.log(item?.id);
+  }
 
   const formDataEdit = new FormData();
   formDataEdit.append("title_en", data?.titleEn);
@@ -166,9 +178,9 @@ const News = () => {
     .then(resp => resp.json())
     .then(dataEdit => {
       if(dataEdit?.success) {
-        handleEditClose();
         getNews();
         alert(dataEdit?.message);
+        handleEditClose();
       }
     })
   }
@@ -177,33 +189,35 @@ const News = () => {
 
 
 
-/*   const handleDelete = (e) => {
-    e.preventDefault();
-    fetch(`${baseUrl}/news/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization" : `Bearer ${token}`
-      }
-    })
-    .then(resp => resp.json())
-    .then(dataDel => {
-      if(dataDel?.message) {
-        const newData = news?.filter((deleteNews) => deleteNews?.id !== id);
-        setNews(newData)
-        alert(dataEdit?.message)
-      }
-    }
-    )
-    .catch(err => console.error(err))
-  }; */
+
 
 
 
 //DELETE 
-  const handleDelete = (item) => {
-    /* const newData = data?.filter((itemD) => item?.id !== itemD);
-    setData({...data, newData}) */
+const handleDelete = (e) => {
+  e.preventDefault();
+  fetch(`${baseUrl}news/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization" : `Bearer ${token}`
+    }
+  })
+  .then(resp => resp.json())
+  .then(dataDel => {
+    if(dataDel?.message) {
+      const newData = news?.filter((deleteNews) => deleteNews?.id !== id);
+      setNews(newData);
+      alert(dataDel?.message);
+      handleDeleteClose();
+    }
   }
+  )
+  .catch(err => console.error(err))
+};
+
+
+
+
 
   useEffect(() => {
     getNews();
@@ -211,6 +225,26 @@ const News = () => {
 
   return (
     <>
+      {/* Delete */}
+      <Modal
+        title="Delete"
+        open={openDelete}
+        onClose={handleDeleteClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <p>O`chirilsinmi?</p>
+                <button className="btn btn-outline-primary" onClick={handleDeleteClose}>Cancel</button>
+                <button className="btn btn-primary" onClick={handleDelete}>Ok</button>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       {/* Tahrirlash */}
       <Modal
         title="Editing"
@@ -590,7 +624,7 @@ const News = () => {
                         >
                           Edit
                         </button>
-                        <button className="btn btn-danger">Delete</button>
+                        <button className="btn btn-danger" onClick={() => deleteID(item)}>Delete</button>
                       </td>
                     </tr>
                   ))}
