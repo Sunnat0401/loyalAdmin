@@ -7,7 +7,7 @@ const { Title } = Typography;
 const Category = () => {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null); // Yangi state
+  const [editingCategory, setEditingCategory] = useState(null); 
   const [form] = Form.useForm();
   
   useEffect(() => {
@@ -16,13 +16,13 @@ const Category = () => {
     
   // GetCategory
   const getCategory = () => {
-    const token = localStorage.getItem('accesstoken');
+    const token = localStorage?.getItem('accesstoken');
     fetch('https://api.dezinfeksiyatashkent.uz/api/categories', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => res?.json())
       .then((data) => {
         setData(data?.data);
       })
@@ -35,10 +35,10 @@ const Category = () => {
 
   // AddCategory
   const addModel = (values) => {
-    const token = localStorage.getItem('accesstoken');
+    const token = localStorage?.getItem('accesstoken');
     const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('description', values.description);
+    formData.append('name', values?.name);
+    formData.append('description', values?.description);
 
     fetch('https://api.dezinfeksiyatashkent.uz/api/categories', {
       method: 'POST',
@@ -48,24 +48,24 @@ const Category = () => {
       body: formData,
     })
       .then((response) => {
-        if (!response.ok) {
+        if (!response?.ok) {
           throw new Error('Xato so\'rov yuborildi');
         }
-        return response.json();
+        return response?.json();
       })
       .then((data) => {
         if (data?.success) {
-          message.success('Model muvaffaqiyatli qo\'shildi');
-          form.resetFields();
+          message?.success('Model muvaffaqiyatli qo\'shildi');
+          form?.resetFields();
           setIsModalOpen(false);
-          getCategory(); // Optionally refresh the category list
+          getCategory(); 
         } else {
           message.error(data?.message || 'Model qo\'shishda xatolik yuz berdi');
         }
       })
       .catch((error) => {
-        console.error('Error adding model:', error);
-        message.error('Model qo\'shishda xatolik yuz berdi');
+        console?.error('Error adding model:', error);
+        message?.error('Model qo\'shishda xatolik yuz berdi');
       });
   };
   // AddCategory
@@ -74,8 +74,8 @@ const Category = () => {
   const updateCategory = (id, values) => {
     const token = localStorage.getItem('accesstoken');
     const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('description', values.description);
+    formData?.append('name', values?.name);
+    formData?.append('description', values?.description);
 
     fetch(`https://api.dezinfeksiyatashkent.uz/api/categories/${id}`, {
       method: 'PUT',
@@ -85,31 +85,31 @@ const Category = () => {
       body: formData,
     })
       .then((response) => {
-        if (!response.ok) {
+        if (!response?.ok) {
           throw new Error('Xato so\'rov yuborildi');
         }
-        return response.json();
+        return response?.json();
       })
       .then((data) => {
         if (data?.success) {
-          message.success('Kategoriya muvaffaqiyatli yangilandi');
-          form.resetFields();
+          message?.success('Kategoriya muvaffaqiyatli yangilandi');
+          form?.resetFields();
           setIsModalOpen(false);
-          getCategory(); // Optionally refresh the category list
+          getCategory(); 
         } else {
-          message.error(data?.message || 'Kategoriya yangilashda xatolik yuz berdi');
+          message?.error(data?.message || 'Kategoriya yangilashda xatolik yuz berdi');
         }
       })
       .catch((error) => {
-        console.error('Error updating category:', error);
-        message.error('Kategoriya yangilashda xatolik yuz berdi');
+        console?.error('Error updating category:', error);
+        message?.error('Kategoriya yangilashda xatolik yuz berdi');
       });
   };
   // UpdateCategory
 
   // DeleteCategory
   const deleteCategory = (id) => {
-    const token = localStorage.getItem('accesstoken');
+    const token = localStorage?.getItem('accesstoken');
     fetch(`https://api.dezinfeksiyatashkent.uz/api/categories/${id}`, {
       method: "DELETE",
       headers: {
@@ -117,14 +117,14 @@ const Category = () => {
       },
     })
       .then(response => {
-        if (!response.ok) {
+        if (!response?.ok) {
           throw new Error('Xato so\'rov yuborildi');
         }
-        return response.json();
+        return response?.json();
       })
       .then(() => {
         message.success('Kategoriya muvaffaqiyatli o\'chirildi');
-        setData(data => data.filter(item => item.id !== id));
+        setData(data => data?.filter(item => item?.id !== id));
       })
       .catch((error) => {
         console.error('Error deleting category:', error);
@@ -151,8 +151,8 @@ const Category = () => {
     if (category) {
       setEditingCategory(category);
       form.setFieldsValue({
-        name: category.name,
-        description: category.description,
+        name: category?.name,
+        description: category?.description,
       });
     } else {
       setEditingCategory(null);
@@ -165,7 +165,7 @@ const Category = () => {
       .validateFields()
       .then((values) => {
         if (editingCategory) {
-          updateCategory(editingCategory.id, values);
+          updateCategory(editingCategory?.id, values);
         } else {
           addModel(values);
         }
@@ -202,10 +202,10 @@ const Category = () => {
       title: 'Actions',
       key: 'actions',
       render: (text, record) => (
-        <span>
+        <div className='buttons '>
           <Button className='green btn' onClick={() => showModal(record)}>Edit</Button>
-          <Button className='red btn' onClick={() => confirmDelete(record.id)}>Delete</Button>
-        </span>
+          <Button className='red btn' onClick={() => confirmDelete(record?.id)}>Delete</Button>
+        </div>
       ),
     },
   ];
@@ -236,7 +236,7 @@ const Category = () => {
         dataSource={data}
         columns={columns}
         rowKey="id"
-        pagination={{ pageSize: 5 }} // Pagination configuration
+        pagination={{ pageSize: 5 }}
       />
     </div>
   );

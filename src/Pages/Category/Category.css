@@ -1,5 +1,12 @@
 .btn{
-    margin: 2px 5px
+    margin: 2px 5px;
+
+}
+.buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease-in-out;
 }
 .green{
     background-color: green;
@@ -8,10 +15,18 @@
 .red{
     background-color: red;
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
 }
 .blue{
     background-color:#1677FF;
     color: white;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .titles{
     font-size: 16px !important;
