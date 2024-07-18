@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import "./Source.css";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 
 const Source = () => {
   const token = localStorage.getItem("accesstoken");
@@ -80,6 +80,25 @@ const Source = () => {
     handleDeleteOpen();
     console.log(delID);
   };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    fetch(`${baseUrl}sources/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
+    })
+    .then(resp => resp.json())
+    .then(del => {
+      if(del.success) {
+        const delSrc = source?.filter((data) => data?.id !== id);
+        setSource(delSrc);
+        message.success(delSrc?.message)
+        handleDeleteClose(); 
+      }
+    })
+  }
 
   useEffect(() => {
     getSource();
