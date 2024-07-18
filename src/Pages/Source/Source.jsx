@@ -14,9 +14,6 @@ const Source = () => {
   const [openSrc, setOpenSrc] = useState(false);
 
 
-/*   const categoryInput = document.getElementById("category");
-  console.log("categoryInput", categoryInput); */
-
   //GET
   const getSource = () => {
     fetch(`${baseUrl}sources/`)
