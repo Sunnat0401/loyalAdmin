@@ -9,19 +9,31 @@ const Source = () => {
   const baseUrl = "https://api.dezinfeksiyatashkent.uz/api/";
   const baseImgUrl = `https://api.dezinfeksiyatashkent.uz/api/uploads/images/`;
   const [source, setSource] = useState([]);
-
-  const [id, setId] = useState();
-  const [data, setData] = useState({});
+  const [category, setCategory] = useState([]);
 
   const [openSrc, setOpenSrc] = useState(false);
 
-//GET
+
+/*   const categoryInput = document.getElementById("category");
+  console.log("categoryInput", categoryInput); */
+
+  //GET
   const getSource = () => {
     fetch(`${baseUrl}sources/`)
       .then((resp) => resp.json())
       .then((data) => {
         setSource(data?.data);
-        console.log(data?.data);
+        // console.log("source", data?.data);
+      });
+  };
+
+  //Category GET
+  const getCat = () => {
+    fetch(`${baseUrl}categories`)
+      .then((resp) => resp.json())
+      .then((categ) => {
+        setCategory(categ?.data);
+        console.log("category", categ?.data);
       });
   };
 
@@ -33,57 +45,45 @@ const Source = () => {
     setOpenSrc(false);
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 600,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
 
+  
+  const [categ, setCateg] = useState();
+  console.log("categoryId", categ);
   const [title, setTitle] = useState();
-  const [category, setCategory] = useState();
   const [pictureSrc, setPictureSrc] = useState(null);
 
-/*   console.log("title", title);
+  /*   console.log("title", title);
   console.log("category", category);
   console.log("picture", picture); */
 
-//POST
+  //POST
   const formDataSrc = new FormData();
   formDataSrc.append("title", title);
-  formDataSrc.append("category", category);
-  formDataSrc.append("images", pictureSrc)
-   const addSource = (e) => {
+  formDataSrc.append("category", categ);
+  formDataSrc.append("images", pictureSrc);
+  const addSource = (e) => {
     e.preventDefault();
     handleOpenSrc();
     fetch(`${baseUrl}sources/`, {
       method: "POST",
       body: formDataSrc,
       headers: {
-        "Authorization" : `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .then(resp => resp.json())
-    .then(data => {
-      if(data?.success) {
-        getSource();
-        handleCloseSrc();
-      }
-    })
-  }
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (data?.success) {
+          getSource();
+          handleCloseSrc();
+        }
+      });
+  };
 
-
-  const getId = (item) => {
-    console.log(item);
-  }
 
   useEffect(() => {
     getSource();
+    getCat();
   }, []);
 
   return (
@@ -118,14 +118,16 @@ const Source = () => {
                     </div>
                     <div className="col-lg-6 d-flex flex-column">
                       <label htmlFor="category">*Category</label>
-                      <input
-                        type="text"
-                        id="category"
-                        className="form-control mt-1"
-                        onChange={(e) => setCategory(e?.target?.value)}
-                      />
+                      <select className="select form-control" style={{background: "transparent"}}>
+                        {category &&
+                          category?.map((cat, index) => (
+                            <option id="category" key={index} onChange={() => setCateg(cat?.id)}>
+                              {cat?.name}
+                            </option>
+                          ))}
+                      </select>
                     </div>
-                    <div className="col-lg-6">
+                    <div className="col-lg-6 mt-3">
                       <label htmlFor="picture">Upload the images</label>
                       <input
                         type="file"
@@ -137,12 +139,12 @@ const Source = () => {
                   </div>
                   <div className="row">
                     <div className="col-lg-12">
-                      <button
-                        className="btn btn-outline-primary"
-                      >
+                      <button className="btn btn-outline-primary">
                         Cancel
                       </button>
-                      <button className="btn btn-primary" onClick={addSource}>Ok</button>
+                      <button className="btn btn-primary" onClick={addSource}>
+                        Ok
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -151,52 +153,6 @@ const Source = () => {
           </div>
         </div>
       </Modal>
-      {/*  <Modal
-        footer={null}
-        open={open}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <p>Add City</p>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-lg-12">
-                <form id="sourcesForm">
-                  <div className="container">
-                    <div className="row">
-                      <div className="col-lg-6 d-flex flex-column">
-                        <label htmlFor="title">*Title</label>
-                        <input type="text" onChange={(e) => setTitle(e?.target?.value)} id="title" />
-                      </div>
-                      <div className="col-lg-6 d-flex flex-column">
-                        <label htmlFor="category">*Category</label>
-                        <input type="text" id="category" onChange={(e) => setCategory(e?.target?.value)}/>
-                      </div>
-                      <div className="col-lg-6">
-                        <label htmlFor="picture">Upload the images</label>
-                        <input type="file" id="picture" onChange={(e) => setPicture(e?.target?.files[0])} />
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <button className="btn btn-outline-primary">
-                          Cancel
-                        </button>
-                        <button className="btn btn-primary">Ok</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </Box>
-      </Modal> */}
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
@@ -233,7 +189,10 @@ const Source = () => {
                         />
                       </td>
                       <td>
-                        <button className="btn btn-outline-primary mx-1" onClick={getId}>
+                        <button
+                          className="btn btn-outline-primary mx-1"
+                          // onClick={getId}
+                        >
                           Edit
                         </button>
                         <button className="btn btn-danger">Delete</button>
