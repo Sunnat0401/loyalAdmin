@@ -203,8 +203,8 @@ const Category = () => {
       key: 'actions',
       render: (text, record) => (
         <div className='buttons '>
-          <Button className='green btn' onClick={() => showModal(record)}>Edit</Button>
-          <Button className='red btn' onClick={() => confirmDelete(record?.id)}>Delete</Button>
+          <Button className='green ' onClick={() => showModal(record)}>Edit</Button>
+          <Button className='red ' onClick={() => confirmDelete(record?.id)}>Delete</Button>
         </div>
       ),
     },
@@ -231,7 +231,7 @@ const Category = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <Button className='btn blue' onClick={() => showModal(null)}>Add</Button>
+      <Button htmlType="button" className='blue' onClick={() => showModal(null)}>Add</Button>
       <Table
         dataSource={data}
         columns={columns}

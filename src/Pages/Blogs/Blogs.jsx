@@ -189,8 +189,8 @@ const Blogs = () => {
       key: 'actions',
       render: (text, record) => (
         <div className='buttons'>
-          <Button className='green btn' onClick={() => editBlog(record)}>Edit</Button>
-          <Button className='red btn' onClick={() => confirmDelete(record?.id)}>Delete</Button>
+          <Button className='green ' onClick={() => editBlog(record)}>Edit</Button>
+          <Button className='red ' onClick={() => confirmDelete(record?.id)}>Delete</Button>
         </div>
       ),
     },
@@ -271,7 +271,7 @@ const Blogs = () => {
         </Form>
       </Modal>
 
-      <Button onClick={openModalHandler} className='btn add '>Add</Button>
+      <Button onClick={openModalHandler} className=' add '>Add</Button>
 
       <Table dataSource={blogs} columns={columns} rowKey="id" pagination={{ pageSize: 5 }} />
     </div>
