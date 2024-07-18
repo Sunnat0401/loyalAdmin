@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import "./Source.css";
 import { Modal } from "antd";
-import { Box } from "@mui/material";
 
 const Source = () => {
   const token = localStorage.getItem("accesstoken");
@@ -12,7 +11,11 @@ const Source = () => {
   const [category, setCategory] = useState([]);
 
   const [openSrc, setOpenSrc] = useState(false);
-
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [id, setId] = useState();
+  const [categ, setCateg] = useState('');
+  const [title, setTitle] = useState();
+  const [pictureSrc, setPictureSrc] = useState(null);
 
   //GET
   const getSource = () => {
@@ -20,7 +23,6 @@ const Source = () => {
       .then((resp) => resp.json())
       .then((data) => {
         setSource(data?.data);
-        // console.log("source", data?.data);
       });
   };
 
@@ -42,24 +44,20 @@ const Source = () => {
     setOpenSrc(false);
   };
 
+  const handleDeleteOpen = () => {
+    setDeleteOpen(true);
+  };
 
-  
-  const [categ, setCateg] = useState();
-  console.log("categoryId", categ);
-  const [title, setTitle] = useState();
-  const [pictureSrc, setPictureSrc] = useState(null);
-
-  /*   console.log("title", title);
-  console.log("category", category);
-  console.log("picture", picture); */
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+  };
 
   //POST
-  const formDataSrc = new FormData();
-  formDataSrc.append("title", title);
-  formDataSrc.append("category", categ);
-  formDataSrc.append("images", pictureSrc);
-  const addSource = (e) => {
-    e.preventDefault();
+  const addSource = () => {
+    const formDataSrc = new FormData();
+    formDataSrc.append("title", title);
+    formDataSrc.append("category", categ);
+    formDataSrc.append("images", pictureSrc);
     handleOpenSrc();
     fetch(`${baseUrl}sources/`, {
       method: "POST",
@@ -77,6 +75,11 @@ const Source = () => {
       });
   };
 
+  //DELETE
+  const getDelId = (delID) => {
+    handleDeleteOpen();
+    console.log(delID);
+  };
 
   useEffect(() => {
     getSource();
@@ -85,6 +88,25 @@ const Source = () => {
 
   return (
     <>
+      <Modal
+        footer={null}
+        onCancel={handleDeleteClose}
+        open={deleteOpen}
+        onClose={handleDeleteClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12">
+              <p>O`chirilsinmi?</p>
+              <button className="btn btn-outline-primary" onClick={handleDeleteClose}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleDeleteClose}>Ok</button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      {/* Add */}
       <Modal
         footer={null}
         onCancel={handleCloseSrc}
@@ -115,11 +137,16 @@ const Source = () => {
                     </div>
                     <div className="col-lg-6 d-flex flex-column">
                       <label htmlFor="category">*Category</label>
-                      <select className="select form-control" style={{background: "transparent"}}>
+                      <select
+                        className="select form-control"
+                        style={{ background: "transparent" }}
+                        onChange={(e) => setCateg(e.target.value)}
+                      >
+                        <option value="">Select a category</option>
                         {category &&
-                          category?.map((cat, index) => (
-                            <option id="category" key={index} onChange={() => setCateg(cat?.id)}>
-                              {cat?.name}
+                          category.map((cat, index) => (
+                            <option key={index} value={cat.id}>
+                              {cat.name}
                             </option>
                           ))}
                       </select>
@@ -136,7 +163,7 @@ const Source = () => {
                   </div>
                   <div className="row">
                     <div className="col-lg-12">
-                      <button className="btn btn-outline-primary">
+                      <button className="btn btn-outline-primary" onClick={handleCloseSrc}>
                         Cancel
                       </button>
                       <button className="btn btn-primary" onClick={addSource}>
@@ -172,7 +199,7 @@ const Source = () => {
               </thead>
               <tbody>
                 {source &&
-                  source?.map((item, index) => (
+                  source.map((item, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{item?.title}</td>
@@ -186,13 +213,12 @@ const Source = () => {
                         />
                       </td>
                       <td>
-                        <button
-                          className="btn btn-outline-primary mx-1"
-                          // onClick={getId}
-                        >
+                        <button className="btn btn-outline-primary mx-1">
                           Edit
                         </button>
-                        <button className="btn btn-danger">Delete</button>
+                        <button className="btn btn-danger" onClick={() => getDelId(item)}>
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))}
