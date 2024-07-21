@@ -13,7 +13,7 @@ const Source = () => {
   const [openSrc, setOpenSrc] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [id, setId] = useState();
-  const [categ, setCateg] = useState('');
+  const [categ, setCateg] = useState("");
   const [title, setTitle] = useState();
   const [pictureSrc, setPictureSrc] = useState(null);
 
@@ -32,7 +32,6 @@ const Source = () => {
       .then((resp) => resp.json())
       .then((categ) => {
         setCategory(categ?.data);
-        console.log("category", categ?.data);
       });
   };
 
@@ -53,7 +52,8 @@ const Source = () => {
   };
 
   //POST
-  const addSource = () => {
+  const addSource = (e) => {
+    e.preventDefault();
     const formDataSrc = new FormData();
     formDataSrc.append("title", title);
     formDataSrc.append("category", categ);
@@ -70,35 +70,76 @@ const Source = () => {
       .then((data) => {
         if (data?.success) {
           getSource();
+          alert(data?.message);
           handleCloseSrc();
         }
       });
   };
 
+
+  //PUT
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const [data, setData] = useState({title: "", categ: "", pictureSrc: null})
+
+  const handleEditOpen = () => {
+    setOpenEdit(true);
+  };
+  const handleEditClose = () => {
+    setOpenEdit(false);
+  };
+  const getEditId = (item) => {
+    handleEditOpen();
+    setId(item?.id);
+    setData({title: item?.title, categ: item?.categ, pictureSrc: item?.pictureSrc})
+    console.log(item?.id);
+  };
+  const editFormData = new FormData();
+  editFormData.append("title", data?.title);
+  editFormData.append("category", data?.categ);
+  editFormData.append("images", data.pictureSrc);
+
+  const handleEditFunc = (e) => {
+    e.preventDefault();
+    fetch(`${baseUrl}sources/${id}`, {
+      method: "PUT",
+      body: editFormData,
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.success) {
+        console.log(data);
+      }
+    })
+  }
+
   //DELETE
-  const getDelId = (delID) => {
+  const getDelId = (item) => {
     handleDeleteOpen();
-    console.log(delID);
+    setId(item.id);
   };
 
   const handleDelete = (e) => {
     e.preventDefault();
-    fetch(`${baseUrl}sources/`, {
+    fetch(`${baseUrl}sources/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}`,
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .then(resp => resp.json())
-    .then(del => {
-      if(del.success) {
-        const delSrc = source?.filter((data) => data?.id !== id);
-        setSource(delSrc);
-        message.success(delSrc?.message)
-        handleDeleteClose();
-      }
-    })
-  }
+      .then((resp) => resp.json())
+      .then((del) => {
+        if (del.success) {
+          const delSrc = source?.filter((data) => data?.id !== id);
+          setSource(delSrc);
+          message.success(delSrc?.message);
+          handleDeleteClose();
+        }
+      });
+  };
 
   useEffect(() => {
     getSource();
@@ -107,6 +148,86 @@ const Source = () => {
 
   return (
     <>
+      {/* PUT */}
+      <Modal
+        footer={null}
+        onCancel={handleEditClose}
+        open={openEdit}
+        onClose={handleEditClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12">
+              <p>Tahrirlash</p>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <form id="sourcesForm">
+                <div className="container">
+                  <div className="row">
+                    <div className="col-lg-6 d-flex flex-column">
+                      <label htmlFor="title">*Title</label>
+                      <input
+                        type="text"
+                        className="form-control mt-1"
+                        value={data?.title}
+                        onChange={(e) => setData({...data, title : e?.target?.value})}
+                        id="title"
+                      />
+                    </div>
+                    <div className="col-lg-6 d-flex flex-column">
+                      <label htmlFor="category">*Category</label>
+                      <select
+                        className="select form-control"
+                        style={{ background: "transparent" }}
+                        value={data?.categ}
+                        onChange={(e) => setData({...data, categ: e?.target?.value})}
+                      >
+                        <option disabled value="">Select a category</option>
+                        {category &&
+                          category.map((cat, index) => (
+                            <option key={index} value={cat.id}>
+                              {cat.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <div className="col-lg-6 mt-3">
+                      <label htmlFor="picture">Upload the images</label>
+                      <input
+                        type="file"
+                        id="picture"
+                        className="form-control mt-1 mb-1"
+                        onChange={(e) => setData({...data, pictureSrc: e?.target?.files[0]})}
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <button
+                        className="btn btn-outline-primary"
+                        onClick={handleEditClose}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={(e) => handleEditFunc(e)}
+                      >
+                        Ok
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      {/* DELETE */}
       <Modal
         footer={null}
         onCancel={handleDeleteClose}
@@ -119,13 +240,20 @@ const Source = () => {
           <div className="row">
             <div className="col-lg-12">
               <p>O`chirilsinmi?</p>
-              <button className="btn btn-outline-primary" onClick={handleDeleteClose}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleDeleteClose}>Ok</button>
+              <button
+                className="btn btn-outline-primary"
+                onClick={handleDeleteClose}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={handleDelete}>
+                Ok
+              </button>
             </div>
           </div>
         </div>
       </Modal>
-      {/* Add */}
+      {/* POST */}
       <Modal
         footer={null}
         onCancel={handleCloseSrc}
@@ -137,7 +265,7 @@ const Source = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <p>Add City</p>
+              <p>Qo`shish</p>
             </div>
           </div>
           <div className="row">
@@ -161,7 +289,7 @@ const Source = () => {
                         style={{ background: "transparent" }}
                         onChange={(e) => setCateg(e.target.value)}
                       >
-                        <option value="">Select a category</option>
+                        <option value="" disabled>Select a category</option>
                         {category &&
                           category.map((cat, index) => (
                             <option key={index} value={cat.id}>
@@ -182,10 +310,16 @@ const Source = () => {
                   </div>
                   <div className="row">
                     <div className="col-lg-12">
-                      <button className="btn btn-outline-primary" onClick={handleCloseSrc}>
+                      <button
+                        className="btn btn-outline-primary"
+                        onClick={handleCloseSrc}
+                      >
                         Cancel
                       </button>
-                      <button className="btn btn-primary" onClick={addSource}>
+                      <button
+                        className="btn btn-primary"
+                        onClick={(e) => addSource(e)}
+                      >
                         Ok
                       </button>
                     </div>
@@ -196,11 +330,12 @@ const Source = () => {
           </div>
         </div>
       </Modal>
+      {/* GET */}
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
             <button className="btn btn-primary" onClick={handleOpenSrc}>
-              Add City
+              Qo`shish
             </button>
           </div>
         </div>
@@ -232,10 +367,16 @@ const Source = () => {
                         />
                       </td>
                       <td>
-                        <button className="btn btn-outline-primary mx-1">
+                        <button
+                          className="btn btn-outline-primary mx-1"
+                          onClick={() => getEditId(item)}
+                        >
                           Edit
                         </button>
-                        <button className="btn btn-danger" onClick={() => getDelId(item)}>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => getDelId(item)}
+                        >
                           Delete
                         </button>
                       </td>
