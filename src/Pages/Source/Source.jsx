@@ -95,7 +95,7 @@ const Source = () => {
         const delSrc = source?.filter((data) => data?.id !== id);
         setSource(delSrc);
         message.success(delSrc?.message)
-        handleDeleteClose(); 
+        handleDeleteClose();
       }
     })
   }
